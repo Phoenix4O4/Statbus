@@ -1,5 +1,5 @@
 permissions: write-all
-name: Production Deployments
+name: Production Build and Package
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -48,31 +48,8 @@ jobs:
         with:
           cmd: build 
 
-      - name: Pushing artifact to deployment server
-        uses: appleboy/scp-action@master
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          source: "./"
-          target: "~/staging"
-          rm: true
-
-      - name: Deploying on remote server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            mkdir -p /tmp/statbus
-            echo "Stashing configuration files..."
-            mv ~/serv/www/${{ secrets.PROD_DOMAIN }}/app/conf /tmp/statbus/conf/
-            echo "Copying files from staging..."
-            sudo rsync -aqz --delete ~/staging/ ~/serv/www/${{ secrets.PROD_DOMAIN }}/
-            echo "Restoring configuration files"
-            mv /tmp/statbus/conf ~/serv/www/${{ secrets.PROD_DOMAIN }}/app/
-            echo "Clearing twig cache"
-            rm -rf ~/serv/www/${{ secrets.PROD_DOMAIN }}/tmp/twig
-            echo "Done!"
-            rm -rf /tmp/statbus
+          name: production-build
+          path: "./"
