@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           source: "./"
           target: "~/staging"
-          timeout: 120s
+          timeout: 360s
           rm: true
       - name: Deploying on remote server
         uses: appleboy/ssh-action@master
