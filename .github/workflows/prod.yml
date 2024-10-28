@@ -64,6 +64,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
+          timeout: 360s
           script: |
             mkdir -p /tmp/statbus
             echo "Stashing configuration files..."
